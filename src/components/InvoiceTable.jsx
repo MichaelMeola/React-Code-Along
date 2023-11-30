@@ -1,41 +1,68 @@
 import './InvoiceTable.css';
+import axios from 'axios';
 
 import AddButton from './AddButton.jsx'
-import Description from './Description.jsx'
-import Hours from './Hours.jsx'
-import ModeButtons from './ModeButtons.jsx'
-import Rate from './Rate.jsx'
 import TableHeader from './TableHeader.jsx'
 import TableRow from './TableRow.jsx'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-let globalId = 4
+const InvoiceTable = () => {
+  // const {initialData} = props
 
-const InvoiceTable = (props) => {
-  const {initialData} = props
+  const [currentData, setCurrentData] = useState([])
 
-  const [currentData, setCurrentData] = useState(initialData)
+  useEffect(() => {
+    axios.get('/invoices')
+      .then((res) => {
+
+        setCurrentData(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
 
   const addRow = () => {
-    const dataCopy = [...currentData]
 
-    const newRow = {
-        id: globalId,
-        description: 'Description',
-        rate: '',
-        hours: '',
-    }
+    axios.post('/invoice', {description: `A really cool job`})
+      .then((res) => {
+        console.log(res.data)
+        setCurrentData(res.data)
+      })
+      .catch((theseHands) => {
+        console.log(theseHands)
+      })
 
-    dataCopy.push(newRow)
 
-    setCurrentData(dataCopy)
+    // const dataCopy = [...currentData]
 
-    globalId++
+    // const newRow = {
+    //     id: globalId,
+    //     description: 'Description',
+    //     rate: '',
+    //     hours: '',
+    // }
+
+    // dataCopy.push(newRow)
+
+    // setCurrentData(dataCopy)
+
+    // globalId++
   }
 
   const deleteRow = (id) => {
-    const filteredData = currentData.filter((row) => row.id !== id)
+    // const filteredData = currentData.filter((row) => row.id !== id)
+
+    axios.delete(`/invoice/${id}`)
+      .then((res) => {
+        console.log(res.data)
+        setCurrentData(res.data)
+      })
+      .catch((theseHands) => {
+        console.log(theseHands)
+      })
+      
     setCurrentData(filteredData)
   }
 
